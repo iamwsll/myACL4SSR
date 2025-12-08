@@ -87,7 +87,7 @@ dns:
      - '*.msftncsi.com'
      - 'www.msftconnecttest.com'
   default-nameserver:
-     - 'system'
+     # - 'system'
      - '223.6.6.6'
      - '8.8.8.8'
      - '2400:3200::1'
