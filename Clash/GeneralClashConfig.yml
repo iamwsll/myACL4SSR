@@ -68,9 +68,30 @@ dns:
   listen: 0.0.0.0:53
   enhanced-mode: fake-ip # 模式：redir-host或fake-ip
   fake-ip-range: 198.18.0.1/16 #
+  fake-ip-filter-mode: 'blacklist'
+  prefer-h3: false
+  respect-rules: false
+  use-hosts: false
+  use-system-hosts: false
   fake-ip-filter: # fake ip 白名单列表，如果你不知道这个参数的作用，请勿修改
+     # - '*.lan'
+     # - localhost.ptlogin2.qq.com
      - '*.lan'
-     - localhost.ptlogin2.qq.com
+     - '*.local'
+     - '*.arpa'
+     - 'time.*.com'
+     - 'ntp.*.com'
+     - 'time.*.com'
+     - '+.market.xiaomi.com'
+     - 'localhost.ptlogin2.qq.com'
+     - '*.msftncsi.com'
+     - 'www.msftconnecttest.com'
+  default-nameserver:
+     - 'system'
+     - '223.6.6.6'
+     - '8.8.8.8'
+     - '2400:3200::1'
+     - '2001:4860:4860::8888'
   nameserver:
     # 阿里公共 DNS（DoH + DoT）
      - https://dns.alidns.com/dns-query     # AliDNS DoH  [oai_citation:0‡lingdata.org](https://lingdata.org/lab/public-dns?utm_source=chatgpt.com)
@@ -112,11 +133,17 @@ dns:
      - https://dns.rubyfish.cn/dns-query
      # - https://cloudflare-dns.com/dns-query
      # - https://dns.google/dns-query
+  direct-nameserver-follow-policy: false
   fallback-filter:
      geoip: true # 默认
+     geoip-code: 'CN'
      ipcidr: # 在这个网段内的 IP 地址会被考虑为被污染的 IP
        - 240.0.0.0/4
-
+       - '0.0.0.0/32'
+  proxy-server-nameserver:
+     - 'https://doh.pub/dns-query'
+     - 'https://dns.alidns.com/dns-query'
+     - 'tls://223.5.5.5'
 # 1. clash DNS 请求逻辑：
 #   (1) 当访问一个域名时， nameserver 与 fallback 列表内的所有服务器并发请求，得到域名对应的 IP 地址。
 #   (2) clash 将选取 nameserver 列表内，解析最快的结果。
