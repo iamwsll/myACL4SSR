@@ -65,30 +65,54 @@ experimental:
 dns:
   enable: true # 是否启用dns false
   ipv6: true
-  listen: 0.0.0.0:53
+  listen: 0.0.0.0:1053
+  # listen: 0.0.0.0:53
   enhanced-mode: fake-ip # 模式：redir-host或fake-ip
   fake-ip-range: 198.18.0.1/16 #
   fake-ip-filter: # fake ip 白名单列表，如果你不知道这个参数的作用，请勿修改
      - '*.lan'
      - localhost.ptlogin2.qq.com
   nameserver:
-     - 223.5.5.5 # 阿里DNS
-     - 180.76.76.76 # 百度DNS
-     - 119.29.29.29 # 腾讯DNS
-     - 117.50.11.11 # ONE DNS拦截版 恶意网站拦截、广告过滤
-     - 117.50.10.10 # ONE DNS纯净版 直接返回其真实的响应结果
-     - 114.114.114.114 # 114DNS
-     - https://dns.alidns.com/dns-query # 阿里 DoH DNS
-     - https://doh.360.cn/dns-query # 360 DoH DNS
+    # 阿里公共 DNS（DoH + DoT）
+     - https://dns.alidns.com/dns-query     # AliDNS DoH  [oai_citation:0‡lingdata.org](https://lingdata.org/lab/public-dns?utm_source=chatgpt.com)
+     - tls://dns.alidns.com:853            # AliDNS DoT  [oai_citation:1‡lingdata.org](https://lingdata.org/lab/public-dns?utm_source=chatgpt.com)
+
+    # 腾讯 DNSPod 公共 DNS（DoH + DoT）
+     - https://doh.pub/dns-query           # DNSPod DoH  [oai_citation:2‡lingdata.org](https://lingdata.org/lab/public-dns?utm_source=chatgpt.com)
+     - tls://dot.pub:853                   # DNSPod DoT 主机名  [oai_citation:3‡lingdata.org](https://lingdata.org/lab/public-dns?utm_source=chatgpt.com)
+
+    # 360 安全 DNS（DoH）
+     - https://doh.360.cn/dns-query        # 360 DoH  [oai_citation:4‡Gist](https://gist.github.com/leiless/df17252a17503d3ebf9a04e50f163114?utm_source=chatgpt.com)
+
+     # - 223.5.5.5 # 阿里DNS
+     # - 180.76.76.76 # 百度DNS
+     # - 119.29.29.29 # 腾讯DNS
+     # - 117.50.11.11 # ONE DNS拦截版 恶意网站拦截、广告过滤
+     # - 117.50.10.10 # ONE DNS纯净版 直接返回其真实的响应结果
+     # - 114.114.114.114 # 114DNS
+     # - https://dns.alidns.com/dns-query # 阿里 DoH DNS
+     # - https://doh.360.cn/dns-query # 360 DoH DNS
   fallback:
-     - 8.8.8.8 # 谷歌DNS
-     - 1.1.1.1 # Cloudflare DNS
+      # Cloudflare 1.1.1.1
+     - https://cloudflare-dns.com/dns-query # Cloudflare DoH  [oai_citation:5‡Cloudflare Docs](https://developers.cloudflare.com/1.1.1.1/encryption/dns-over-https/make-api-requests/?utm_source=chatgpt.com)
+     - tls://1.1.1.1:853                    # Cloudflare DoT  [oai_citation:6‡Cloudflare Docs](https://developers.cloudflare.com/1.1.1.1/encryption/dns-over-https/?utm_source=chatgpt.com)
+
+    # Google Public DNS
+     - https://dns.google/dns-query         # Google DoH  [oai_citation:7‡Google for Developers](https://developers.google.com/speed/public-dns/docs/doh?utm_source=chatgpt.com)
+     - tls://8.8.8.8:853                    # Google DoT（公开资料常用端口配置） [oai_citation:8‡lingdata.org](https://lingdata.org/lab/public-dns?utm_source=chatgpt.com)
+
+    # Quad9（隐私友好，默认过滤部分恶意域名）
+     - tls://dns.quad9.net:853              # Quad9 DoT  [oai_citation:9‡CLN](https://cln.io/blog/list-of-dns-over-https-servers/?utm_source=chatgpt.com)
+     - https://dns.quad9.net/dns-query      # Quad9 DoH  [oai_citation:10‡CLN](https://cln.io/blog/list-of-dns-over-https-servers/?utm_source=chatgpt.com)
+
+     # - 8.8.8.8 # 谷歌DNS
+     # - 1.1.1.1 # Cloudflare DNS
      - tls://dns.rubyfish.cn:853
-     - tls://1.0.0.1:853
-     - tls://dns.google:853
+     # - tls://1.0.0.1:853
+     # - tls://dns.google:853
      - https://dns.rubyfish.cn/dns-query
-     - https://cloudflare-dns.com/dns-query
-     - https://dns.google/dns-query
+     # - https://cloudflare-dns.com/dns-query
+     # - https://dns.google/dns-query
   fallback-filter:
      geoip: true # 默认
      ipcidr: # 在这个网段内的 IP 地址会被考虑为被污染的 IP
