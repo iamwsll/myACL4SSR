@@ -104,7 +104,7 @@ dns:
      - tls://dot.pub:853                   # DNSPod DoT 主机名  [oai_citation:3‡lingdata.org](https://lingdata.org/lab/public-dns?utm_source=chatgpt.com)
 
     # 360 安全 DNS（DoH）
-     - https://doh.360.cn/dns-query        # 360 DoH  [oai_citation:4‡Gist](https://gist.github.com/leiless/df17252a17503d3ebf9a04e50f163114?utm_source=chatgpt.com)
+     #- https://doh.360.cn/dns-query        # 360 DoH  [oai_citation:4‡Gist](https://gist.github.com/leiless/df17252a17503d3ebf9a04e50f163114?utm_source=chatgpt.com)
 
      # - 223.5.5.5 # 阿里DNS
      # - 180.76.76.76 # 百度DNS
