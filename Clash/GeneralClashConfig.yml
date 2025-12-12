@@ -62,127 +62,82 @@ experimental:
 #   '*.clash.dev': 127.0.0.1
 #   'alpha.clash.dev': '::1'
 
+hosts:
+  # 国内 DoH/DoT（允许其解析国内域名 + 代理节点域名）
+  dns.alidns.com:
+    - 223.5.5.5
+    - 223.6.6.6                 # AliDNS 公共 DNS IP 
+  doh.pub:
+    - 1.12.12.12
+    - 120.53.53.53              #  [oai_citation:18‡Cloudflare Radar](https://radar.cloudflare.com/domains/domain/doh.pub)
+  dot.pub:
+    - 1.12.12.12
+    - 120.53.53.53              #  [oai_citation:19‡Cloudflare Radar](https://radar.cloudflare.com/domains/domain/dot.pub)
+
+  # 国外 DoH（固定到 IP，避免依赖国内 DNS 去解析国外域名）
+  cloudflare-dns.com:
+    - 104.16.248.249
+    - 104.16.249.249            #  [oai_citation:20‡Cloudflare Radar](https://radar.cloudflare.com/domains/domain/cloudflare-dns.com)
+  dns.google:
+    - 8.8.8.8
+    - 8.8.4.4                   #  [oai_citation:21‡Cloudflare Radar](https://radar.cloudflare.com/domains/domain/dns.google)
+  dns.quad9.net:
+    - 9.9.9.9
+    - 149.112.112.112           #  [oai_citation:22‡Cloudflare Radar](https://radar.cloudflare.com/domains/domain/dns.quad9.net)
+
 dns:
-  enable: true # 是否启用dns false
+  enable: true
   ipv6: true
-  listen: 0.0.0.0:53
-  enhanced-mode: fake-ip # 模式：redir-host或fake-ip
-  fake-ip-range: 198.18.0.1/16 #
-  fake-ip-filter-mode: 'blacklist'
+
+  # 如果你不需要给局域网其它设备提供 DNS，强烈建议只监听本机：
+  listen: 127.0.0.1:53
+
+  enhanced-mode: fake-ip
+  fake-ip-range: 198.18.0.1/16
+  fake-ip-filter-mode: blacklist
+  fake-ip-filter:
+    - "*.lan"
+    - "*.local"
+    - "*.arpa"
+    - time.*.com
+    - ntp.*.com
+    - +.market.xiaomi.com
+    - localhost.ptlogin2.qq.com
+    - "*.msftncsi.com"
+    - www.msftconnecttest.com
+
   prefer-h3: false
   respect-rules: true
-  use-hosts: false
+
+  # 用 hosts 固定 DoH/DoT 域名到 IP（不走 DNS）
+  use-hosts: true
   use-system-hosts: false
-  fake-ip-filter: # fake ip 白名单列表，如果你不知道这个参数的作用，请勿修改
-     # - '*.lan'
-     # - localhost.ptlogin2.qq.com
-     - '*.lan'
-     - '*.local'
-     - '*.arpa'
-     - 'time.*.com'
-     - 'ntp.*.com'
-     - 'time.*.com'
-     - '+.market.xiaomi.com'
-     - 'localhost.ptlogin2.qq.com'
-     - '*.msftncsi.com'
-     - 'www.msftconnecttest.com'
+
+  # bootstrap：用于解析“DNS 服务器域名本身”
+  # 官方要求 default-nameserver 必须是 IP，但可以是加密 DNS  [oai_citation:23‡虚空终端](https://wiki.metacubex.one/en/config/dns/)
+  # 这里用“DoH+IP”，但因为证书主机名不等于 IP，必须 skip-cert-verify（仅用于 bootstrap）
   default-nameserver:
-     # - 'system'
-     - '223.6.6.6'
-     - '223.5.5.5'
-     - '8.8.8.8'
-     - '1.1.1.1'
-     # - '2400:3200::1'
-     # - '2001:4860:4860::8888'
-  nameserver:
-    # 阿里公共 DNS（DoH + DoT）
-     - https://dns.alidns.com/dns-query     # AliDNS DoH  [oai_citation:0‡lingdata.org](https://lingdata.org/lab/public-dns?utm_source=chatgpt.com)
-     - tls://dns.alidns.com:853            # AliDNS DoT  [oai_citation:1‡lingdata.org](https://lingdata.org/lab/public-dns?utm_source=chatgpt.com)
+    - https://223.5.5.5/dns-query#skip-cert-verify=true
+    - https://1.12.12.12/dns-query#skip-cert-verify=true
 
-    # 腾讯 DNSPod 公共 DNS（DoH + DoT）
-     - https://doh.pub/dns-query           # DNSPod DoH  [oai_citation:2‡lingdata.org](https://lingdata.org/lab/public-dns?utm_source=chatgpt.com)
-     - tls://dot.pub:853                   # DNSPod DoT 主机名  [oai_citation:3‡lingdata.org](https://lingdata.org/lab/public-dns?utm_source=chatgpt.com)
-
-    # 360 安全 DNS（DoH）
-     #- https://doh.360.cn/dns-query        # 360 DoH  [oai_citation:4‡Gist](https://gist.github.com/leiless/df17252a17503d3ebf9a04e50f163114?utm_source=chatgpt.com)
-
-     # - 223.5.5.5 # 阿里DNS
-     # - 180.76.76.76 # 百度DNS
-     # - 119.29.29.29 # 腾讯DNS
-     # - 117.50.11.11 # ONE DNS拦截版 恶意网站拦截、广告过滤
-     # - 117.50.10.10 # ONE DNS纯净版 直接返回其真实的响应结果
-     # - 114.114.114.114 # 114DNS
-     # - https://dns.alidns.com/dns-query # 阿里 DoH DNS
-     # - https://doh.360.cn/dns-query # 360 DoH DNS
-  fallback:
-      # Cloudflare 1.1.1.1
-     - https://cloudflare-dns.com/dns-query # Cloudflare DoH  [oai_citation:5‡Cloudflare Docs](https://developers.cloudflare.com/1.1.1.1/encryption/dns-over-https/make-api-requests/?utm_source=chatgpt.com)
-     - tls://1.1.1.1:853                    # Cloudflare DoT  [oai_citation:6‡Cloudflare Docs](https://developers.cloudflare.com/1.1.1.1/encryption/dns-over-https/?utm_source=chatgpt.com)
-
-    # Google Public DNS
-     - https://dns.google/dns-query         # Google DoH  [oai_citation:7‡Google for Developers](https://developers.google.com/speed/public-dns/docs/doh?utm_source=chatgpt.com)
-     - tls://8.8.8.8:853                    # Google DoT（公开资料常用端口配置） [oai_citation:8‡lingdata.org](https://lingdata.org/lab/public-dns?utm_source=chatgpt.com)
-
-    # Quad9（隐私友好，默认过滤部分恶意域名）
-     - tls://dns.quad9.net:853              # Quad9 DoT  [oai_citation:9‡CLN](https://cln.io/blog/list-of-dns-over-https-servers/?utm_source=chatgpt.com)
-     - https://dns.quad9.net/dns-query      # Quad9 DoH  [oai_citation:10‡CLN](https://cln.io/blog/list-of-dns-over-https-servers/?utm_source=chatgpt.com)
-
-     # - 8.8.8.8 # 谷歌DNS
-     # - 1.1.1.1 # Cloudflare DNS
-     - tls://dns.rubyfish.cn:853
-     # - tls://1.0.0.1:853
-     # - tls://dns.google:853
-     - https://dns.rubyfish.cn/dns-query
-     # - https://cloudflare-dns.com/dns-query
-     # - https://dns.google/dns-query
-  direct-nameserver-follow-policy: false
-  fallback-filter:
-     geoip: true # 默认
-     geoip-code: 'CN'
-     ipcidr: # 在这个网段内的 IP 地址会被考虑为被污染的 IP
-       - 240.0.0.0/4
-       - '0.0.0.0/32'
-     domain:
-       - '+.google.com'
-       - '+.facebook.com'
-       - '+.youtube.com'
+  # 代理节点域名：只允许用国内 DoH（“允许其解析代理服务器域名”）
   proxy-server-nameserver:
-     - 'https://doh.pub/dns-query'
-     - 'https://dns.alidns.com/dns-query'
-     - 'tls://223.5.5.5'
-# 1. clash DNS 请求逻辑：
-#   (1) 当访问一个域名时， nameserver 与 fallback 列表内的所有服务器并发请求，得到域名对应的 IP 地址。
-#   (2) clash 将选取 nameserver 列表内，解析最快的结果。
-#   (3) 若解析结果中，IP 地址属于 国外，那么 clash 将选择 fallback 列表内，解析最快的结果。
-#
-#   因此，我在 nameserver 和 fallback 内都放置了无污染、解析速度较快的国内 DNS 服务器，以达到最快的解析速度。
-#   但是 fallback 列表内服务器会用在解析境外网站，为了结果绝对无污染，我仅保留了支持 DoT/DoH 的两个服务器。
-#
-# 2. clash DNS 配置注意事项：
-#   (1) 如果您为了确保 DNS 解析结果无污染，请仅保留列表内以 tls:// 或 https:// 开头的 DNS 服务器，但是通常对于国内域名没有必要。
-#   (2) 如果您不在乎可能解析到污染的结果，更加追求速度。请将 nameserver 列表的服务器插入至 fallback 列表内，并移除重复项。
-#
-# 3. 关于 DNS over HTTPS (DoH) 和 DNS over TLS (DoT) 的选择：
-#   对于两项技术双方各执一词，而且会无休止的争论，各有利弊。各位请根据具体需求自行选择，但是配置文件内默认启用 DoT，因为目前国内没有封锁或管制。
-#   DoH: 以 https:// 开头的 DNS 服务器。拥有更好的伪装性，且几乎不可能被运营商或网络管理封锁，但查询效率和安全性可能略低。
-#   DoT: 以 tls:// 开头的 DNS 服务器。拥有更高的安全性和查询效率，但端口有可能被管制或封锁。
-#   若要了解更多关于 DoH/DoT 相关技术，请自行查阅规范文档。
+    - https://doh.pub/dns-query
+    - https://dns.alidns.com/dns-query
 
-# 代理组
-# 下面这3个不要引到订阅里去 要不会出错
-# Will be ignored after profile selection
-#proxies:
-#  - name: Shadowsocks
-#    type: socks5
-#    server: 127.0.0.1
-#    port: 1080
-#proxy-groups:
-#  - name: Proxy
-#    type: select
-#    proxies:
-#      - Shadowsocks
-#rules:
-#  - 'MATCH,DIRECT'
+  # 国内域名 / 私有域名：走国内（加密）DNS
+  nameserver-policy:
+    "geosite:cn,private":
+      - https://doh.pub/dns-query
+      - tls://dot.pub:853
+      - https://dns.alidns.com/dns-query
+      - tls://dns.alidns.com:853
+
+  # 其它域名（默认）：走国外 DoH，并强制经由代理
+  nameserver:
+    - https://cloudflare-dns.com/dns-query#proxy=🚀 手动切换
+    - https://dns.google/dns-query#proxy=🚀 手动切换
+    - https://dns.quad9.net/dns-query#proxy=🚀 手动切换
 
 # Clash for Windows
 # Proxies module latency test settings
