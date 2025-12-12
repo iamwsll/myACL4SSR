@@ -135,9 +135,9 @@ dns:
 
   # 其它域名（默认）：走国外 DoH，并强制经由代理
   nameserver:
-    - https://cloudflare-dns.com/dns-query#proxy=🚀 手动切换
-    - https://dns.google/dns-query#proxy=🚀 手动切换
-    - https://dns.quad9.net/dns-query#proxy=🚀 手动切换
+    - https://cloudflare-dns.com/dns-query#RULES
+    - https://dns.google/dns-query#RULES
+    - https://dns.quad9.net/dns-query#RULES
 
 # Clash for Windows
 # Proxies module latency test settings
