@@ -127,7 +127,7 @@ dns:
 
   # 国内域名 / 私有域名：走国内（加密）DNS
   nameserver-policy:
-    "geosite:cn,private":
+    # "geosite:cn,private":
       - https://doh.pub/dns-query
       - tls://dot.pub:853
       - https://dns.alidns.com/dns-query
@@ -138,6 +138,10 @@ dns:
     - https://cloudflare-dns.com/dns-query#RULES
     - https://dns.google/dns-query#RULES
     - https://dns.quad9.net/dns-query#RULES
+    - https://doh.pub/dns-query
+    - tls://dot.pub:853
+    - https://dns.alidns.com/dns-query
+    - tls://dns.alidns.com:853
 
 # Clash for Windows
 # Proxies module latency test settings
