@@ -126,12 +126,12 @@ dns:
     - https://dns.alidns.com/dns-query
 
   # 国内域名 / 私有域名：走国内（加密）DNS
-  nameserver-policy:
-    # "geosite:cn,private":
-      - https://doh.pub/dns-query
-      - tls://dot.pub:853
-      - https://dns.alidns.com/dns-query
-      - tls://dns.alidns.com:853
+  # nameserver-policy:
+  #   "geosite:cn,private":
+  #     - https://doh.pub/dns-query
+  #     - tls://dot.pub:853
+  #     - https://dns.alidns.com/dns-query
+  #     - tls://dns.alidns.com:853
 
   # 其它域名（默认）：走国外 DoH，并强制经由代理
   nameserver:
